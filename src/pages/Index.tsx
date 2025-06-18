@@ -5,8 +5,8 @@ import PatientDashboard from "@/components/PatientDashboard";
 import CaretakerDashboard from "@/components/CaretakerDashboard";
 import { Button } from "@/components/ui/button";
 import { Users, User } from "lucide-react";
+import { UserType } from "@/lib/types";
 
-type UserType = "patient" | "caretaker" | null;
 
 const Index = () => {
   const [userType, setUserType] = useState<UserType>(null);
