@@ -7,7 +7,7 @@ export const handleSignUp = async (email: string, password: string, name: string
     password,
   });
 
-  if (error) return { error };
+  if (error)  throw new Error("Signup failed") ;
 
   if (data.user) {
     const { error: insertError } = await supabase.from("profiles").insert({
@@ -16,7 +16,7 @@ export const handleSignUp = async (email: string, password: string, name: string
       role,
     });
 
-    if (insertError) return { error: insertError };
+    if (insertError) throw new Error("Unexpected error occured");
   }
 
   return { data };
@@ -33,20 +33,20 @@ export const handleSignIn = async (email:string, password:string)=>{
 
 export const verifyRole = async (expectedRole: UserType) => {
   const { data: { user }, error: userError } = await supabase.auth.getUser();
-
   if (userError || !user) {
     return false;
   }
-
+  
   const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
+  .from("profiles")
+  .select("role")
+  .eq("id", user.id)
+  .single();
+  
   if (profileError || !profile) {
     return false;
   }
+  console.log(expectedRole,"exp",profile,profile.role)
 
   if (profile.role !== expectedRole) {
     await supabase.auth.signOut();

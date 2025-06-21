@@ -4,15 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { UserType } from "@/lib/types";
 import { Users, User, Heart } from "lucide-react";
 import { AuthForm } from "./AuthForm";
+import { Dialog, DialogTrigger } from "./ui/dialog";
+import { useState } from "react";
 
 interface OnboardingProps {
   onComplete: (userType: UserType) => void;
 }
 
 const Onboarding = ({ onComplete }: OnboardingProps) => {
+  const [userRole, setUserRole] = useState<UserType>("caretaker");
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-6">
-      <AuthForm role="caretaker"/>
       <div className="max-w-4xl w-full">
         <div className="text-center mb-12">
           <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-green-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
@@ -26,6 +28,8 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
           </p>
         </div>
 
+      <Dialog>
+        <AuthForm handleSuccessLogin={onComplete} role={userRole}/>
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <Card className="group hover:shadow-xl transition-all duration-300 border-2 hover:border-blue-200 cursor-pointer">
             <CardHeader className="text-center pb-4">
@@ -55,13 +59,15 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
                   <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
                   Large, easy-to-use interface
                 </li>
-              </ul>
-              <Button 
-                className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg"
-                onClick={() => onComplete("patient")}
-              >
-                Continue as Patient
-              </Button>
+              </ul>   
+              <DialogTrigger asChild>
+                <Button 
+                  className="w-full mt-6 bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg"
+                  onClick={() => setUserRole("patient")}
+                >
+                  Continue as Patient
+                </Button>
+              </DialogTrigger>
             </CardContent>
           </Card>
 
@@ -94,15 +100,18 @@ const Onboarding = ({ onComplete }: OnboardingProps) => {
                   Receive email alerts
                 </li>
               </ul>
-              <Button 
-                className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white py-3 text-lg"
-                onClick={() => onComplete("caretaker")}
-              >
-                Continue as Caretaker
-              </Button>
+              <DialogTrigger asChild>
+                <Button 
+                  className="w-full mt-6 bg-green-600 hover:bg-green-700 text-white py-3 text-lg"
+                  onClick={() => setUserRole("caretaker")}
+                >
+                  Continue as Caretaker
+                </Button>
+              </DialogTrigger>
             </CardContent>
           </Card>
         </div>
+      </Dialog>
 
         <div className="text-center mt-12">
           <p className="text-sm text-muted-foreground">

@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
@@ -21,7 +22,7 @@ const signupFormSchema = z.object({
   name:z.string().min(5,"Name must atleast 5 character")
 })
 
-export function SignupForm({role}:{role:UserType}) {
+export function SignupForm({setIsSignInForm,role}:{setIsSignInForm:Dispatch<SetStateAction<boolean>>,role:UserType}) {
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
@@ -37,10 +38,11 @@ export function SignupForm({role}:{role:UserType}) {
     try{
         const res  = await handleSignUp(email,password,name,role);
         console.log(res)
-        toast.success("Signin Success",{position:"top-right"})
+        toast.success("Signin Success",{position:"top-right"});
+        setIsSignInForm(true);
     }catch(err){
         console.log(err);
-        toast.error("Signup Failed",{position:"top-right"})
+        toast.error("Signup Failed",{position:"top-right",style:{background:"red",color:"white"}})
     }
   }
 
@@ -52,11 +54,11 @@ export function SignupForm({role}:{role:UserType}) {
             name="name"
             render={({ field }) => (
                 <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                    <Input placeholder="Enter Name" {...field} />
-                </FormControl>
-                <FormMessage />
+                  <FormLabel>Name</FormLabel>
+                  <FormControl>
+                      <Input placeholder="Enter Name" {...field} />
+                  </FormControl>
+                  <FormMessage />
                 </FormItem>
             )}
         />

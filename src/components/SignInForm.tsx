@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { UserType } from "@/lib/types"
-import { handleSignIn } from "@/lib/supabase/auth"
+import { handleSignIn, verifyRole } from "@/lib/supabase/auth"
 import { toast } from "sonner"
 
 const signInFormSchema = z.object({
@@ -21,7 +21,7 @@ const signInFormSchema = z.object({
   password:z.string().min(10,"Password must atleast 10 character"),
 })
 
-export function SignInForm({role}:{role:UserType}) {
+export function SignInForm({handleSuccessLogin,role}:{handleSuccessLogin: (userType: UserType) => void,role:UserType}) {
   const form = useForm<z.infer<typeof signInFormSchema>>({
     resolver: zodResolver(signInFormSchema),
     defaultValues: {
@@ -36,10 +36,16 @@ export function SignInForm({role}:{role:UserType}) {
     try{
         const res  = await handleSignIn(email,password);
         console.log(res)
-        toast.success("Signin Success",{position:"top-right"})
+        const isRoleVerifySuccess = await verifyRole(role);
+        if(isRoleVerifySuccess){
+          toast.success("Signin Success",{position:"top-right"});
+          handleSuccessLogin(role);
+        }else{
+          toast.error("Signin Failed",{position:"top-right",style:{background:"red",color:"white"}});
+        }
     }catch(err){
         console.log(err);
-        toast.error("Signup Failed",{position:"top-right"})
+        toast.error("Signin Failed",{position:"top-right",style:{background:"red",color:"white"}});
     }
   }
 
